@@ -1,0 +1,41 @@
+//
+//  BelloAppApp.swift
+//  BelloApp
+//
+//  Created by Pedro Raffo Leon on 20.10.23.
+//
+
+import SwiftUI
+
+@main
+struct BelloAppApp: App {
+    @StateObject var data = Routine()
+    @StateObject var routinetracker = RoutineTracker()
+    @StateObject var userinformation = UserInformation()
+    @StateObject var exerciseglossary = ExerciseGlossary()
+    var body: some Scene {
+        WindowGroup {
+            NavigationStack {
+                ContentView()
+            }
+            .environmentObject(data)
+            .environmentObject(routinetracker)
+            .environmentObject(userinformation)
+            .environmentObject(exerciseglossary)
+            .onAppear {
+                // when starting load saved routine tracker information
+                routinetracker.load()
+                // when starting load saved user information
+                userinformation.load_UserInformation()
+                //when starting load new_routine
+                data.load_new_routine()
+            }
+        }
+        // when changed or inputted new trainings, saved the data in in the documentsDirectory from the FileManager
+        .onChange(of: routinetracker.FinishedTrainings){_ in routinetracker.save()}
+        // when changed or inputted new user information, saved the data in the documentsDirectory from the FileManager
+        .onChange(of:userinformation.UserInformationDataBase){_ in userinformation.save_UserInformation()}
+        // when changed or inputted a new routine, saved the data in the documentsDirectory from the FileManager
+        .onChange(of:data.new_routine){_ in data.save_new_routine()}
+    }
+}
