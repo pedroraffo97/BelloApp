@@ -9,69 +9,89 @@ import Foundation
 
 import SwiftUI
 
-struct ToolsView: View {
-    var body: some View{
-        List{
-            NavigationLink{
-                TrainerView()
-                    .navigationTitle("Coach Wisdom")
-            } label: {
-                    Image("coach")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .padding()
-                    Text("Coach Wisdom")
-                    
-                }
-            NavigationLink{
-                BodyFatView()
-                    .navigationTitle("Body Fat Index")
-            } label: {
-                Image("body-fat")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50)
-                    .padding()
-                Text("Body Fat Index")
-            }
-            NavigationLink {
-                OneRepMaxView()
-                    .navigationTitle("One Max Repetition")
-            } label: {
-                Image("repetition")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50)
-                    .padding()
-                Text("1 Max Repetition")
-            }
-            NavigationLink{
-                CaloricReqView()
-                    .navigationTitle("Caloric Requirement")
-            } label:{
-                Image("calories")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50)
-                    .padding()
-                Text("Caloric Requirement")
-            }
-            NavigationLink{
-                TrainingRecomView()
-                    .navigationTitle("BMI Training Tips")
-            } label:{
-                Image("bmi")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50)
-                    .padding()
-                Text("BMI Training Tips")
-            }
-
-            }
+enum ToolType: String, CaseIterable {
+    case trainer = "Coach"
+    case bodyfatindex = "Body Fat Index"
+    case onerepmax = "Max Weight One Repetition"
+    case caloricreq = "Caloric Requirements"
+    case bmitips = "BMI Training Tips"
+    case amrcalculation = "AMR Calculation"
+    
+    var iconName: String {
+        switch self {
+        case .trainer: return "coach"
+        case .bodyfatindex: return "body-fat"
+        case .onerepmax: return "repetition"
+        case .caloricreq: return "calories"
+        case .bmitips: return "bmi"
+        case .amrcalculation: return "metabolism"
         }
     }
+    
+    @ViewBuilder
+    var destination: some View {
+            switch self {
+            case .trainer: TrainerView().navigationTitle("Coach")
+            case .bodyfatindex:
+                BodyFatView()
+                    .navigationTitle("Body Fat Index")
+            case .onerepmax:
+                OneRepMaxView()
+                    .navigationTitle("One Max Repetition")
+            case .caloricreq:
+                CaloricReqView()
+                    .navigationTitle("Caloric Requirement")
+            case .bmitips:
+                TrainingRecomView()
+                    .navigationTitle("BMI Training Tips")
+            case .amrcalculation:
+                CalculateAMR()
+                    .navigationTitle("Calculate AMR")
+            }
+        }
+        
+    }
+
+struct ToolsView: View {
+    var body: some View {
+        NavigationView {
+            ScrollView(.vertical) {
+                let columns = Array(repeating: GridItem(spacing: 10), count: 2)
+                LazyVGrid(columns: columns, spacing: 10){
+                    ForEach(ToolType.allCases, id: \.self) {
+                        toolType in
+                        NavigationLink {
+                            toolType.destination
+                        } label: {
+                            GeometryReader {
+                                geometry in
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(uiColor: .systemGray4))
+                                    .frame(width: geometry.size.width, height: 180)
+                                    .overlay(
+                                        VStack {
+                                            Image(toolType.iconName)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 50, height: 50)
+                                                .padding()
+                                            Text(toolType.rawValue)
+                                                .font(.headline)
+                                        }
+                                            .foregroundColor(.white)
+                                    )
+                            }
+                        }
+                        .frame(height: 180)
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Tools")
+        }
+    }
+}
+
 
 struct ToolsView_Preview: PreviewProvider {
         static var previews: some View {
