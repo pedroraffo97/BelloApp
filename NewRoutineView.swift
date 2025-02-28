@@ -52,6 +52,10 @@ struct NewRoutineView: View {
                                 }
                             }
                 }.onDelete(perform: { indexSet in
+                    for index in indexSet {
+                        let exercise = data.new_routine[index]
+                        data.deleteRoutinefromFirestore(exercise: exercise)
+                    }
                     data.new_routine.remove(atOffsets: indexSet)
                 })
             }.toolbar {
