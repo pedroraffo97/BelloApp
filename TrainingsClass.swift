@@ -9,6 +9,13 @@ import Foundation
 
 import SwiftUI
 
+import FirebaseFirestore
+
+import Firebase
+
+import FirebaseAuth
+
+
 //Identifiable Struct for Exercise
 
 struct Exercise: Identifiable, Hashable, Encodable, Decodable {
@@ -64,28 +71,90 @@ class Routine: ObservableObject {
     ]
     @Published var new_routine: [Exercise] = []
     
-    //save data from the var new_routine
-    func save_new_routine(){
-        do{
-            let fileURL = try getnew_routineFileURL()
-            let data = try JSONEncoder().encode(new_routine)
-            try data.write(to: fileURL)
+    //Save data from the var new_routine in Firestore
+    func addRoutinetoFirestore(exercise: Exercise){
+        //check authentication
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User not authenticated")
+            return
         }
-        catch{
-            print("Unable to save new_routine \(error)")
+        
+        //declare reference to Firestore
+        let db = Firestore.firestore()
+        
+        let ExerciseValues: [String: Any] = [
+            "id": exercise.id.uuidString,
+            "name": exercise.name,
+            "bodypart": exercise.bodypart,
+            "information": exercise.information,
+            "execution": exercise.execution,
+            "repetition": exercise.repetition,
+            "display": exercise.display,
+            "displayInstruction": exercise.displayInstructions,
+            "videoLink": exercise.videolink
+        ]
+        
+        db.collection("users").document(userID).collection("routines").document(exercise.id.uuidString).setData(ExerciseValues, merge: true)
+    }
+    
+    func loadRoutinetoFirestore(){
+        //authenticate with the userID
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User not authenticated")
+            return
+        }
+        //reference to the database
+        let db = Firestore.firestore()
+        
+        db.collection("users").document(userID).collection("routines").getDocuments{
+            snapshot, error in
+            //check for errors
+            if let error = error {
+                print("Error getting documents \(error)")
+            } else {
+                // no error
+                //check the userID
+                print("Your REBT data for the user ID is: \(userID) has been loaded succesfully")
+                //check if snapshot is nil
+                if let snapshot = snapshot {
+                    //Retrieve the documents
+                    self.new_routine = snapshot.documents.compactMap { document in
+                        let data = document.data()
+                        let id = UUID(uuidString: data["id"] as? String ?? "") ?? UUID()
+                        let name = data["name"] as? String ?? ""
+                        let bodypart = data["bodypart"] as? String ?? ""
+                        let information = data["information"] as? String ?? ""
+                        let execution = data["execution"] as? String ?? ""
+                        let repetition = data["repetition"] as? String ?? ""
+                        let display = data["display"] as? String ?? ""
+                        let displayInstructions = data["displayInstructions"] as? String ?? ""
+                        let videolink = data["videolink"] as? String ?? ""
+                        
+                        return Exercise(name: name, bodypart: bodypart, information: information, execution: execution, repetition: repetition, display: display, displayInstructions: displayInstructions, videolink: videolink)
+
+                    }
+                }
+                else {
+                    print("Snapshot is nil")
+                }
+            }
         }
     }
-    // load saved data from the var new_routine
-    func load_new_routine(){
-        do{
-           let fileURL = try getnew_routineFileURL()
-            let data = try Data(contentsOf: fileURL)
-            new_routine = try JSONDecoder().decode([Exercise].self, from: data)
+    
+    func deleteRoutinefromFirestore(exercise: Exercise){
+        //authenticate with user
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User ID not authenticated")
+            return
         }
-        catch{
-            print("Unable to load new_routine: \(error)")
-        }
+        //reference to Firestore
+        let db = Firestore.firestore()
+        
+        //Specify the document to delete
+        db.collection("routines").document(exercise.id.uuidString).delete()
+
     }
+    
 }
 
 //Create a new storage file within the document directory from the File Manager
