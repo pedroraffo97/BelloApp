@@ -1,4 +1,4 @@
-//
+///
 //  ExerciseGlossaryView.swift
 //  BelloApp
 //
@@ -68,34 +68,22 @@ struct ExerciseGlossaryView: View {
                                     .navigationTitle(exercise.name)
                                     .toolbar {
                                         ToolbarItem{
-                                            NavigationLink("Add"){
+                                            Menu("Add") {
                                                 Button{
                                                     data.new_routine
                                                         .append(exercise)
                                                 } label:{
                                                     Text("new Lifting Routine")
                                                 }
-                                                .buttonStyle(.borderedProminent)
-                                                .padding()
-                                                
-                                                
                                                 Button("HIIT session 1"){
                                                     data.HIITSession1.append(exercise)
                                                 }
-                                                .buttonStyle(.borderedProminent)
-                                                .padding()
-                                                
                                                 Button("HIIT session 2"){
                                                     data.HIITSession2.append(exercise)
                                                 }
-                                                .buttonStyle(.borderedProminent)
-                                                .padding()
-                                                
                                                 Button("HIIT session 3"){
                                                     data.HIITSession3.append(exercise)
                                                 }
-                                                .buttonStyle(.borderedProminent)
-                                                .padding()
                                             }
                                             
                                         }
