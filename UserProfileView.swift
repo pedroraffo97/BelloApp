@@ -9,90 +9,67 @@ import Foundation
 
 import SwiftUI
 
+
+
 struct UserProfileView: View {
     @EnvironmentObject var userinformation: UserInformation
     @State var bodyMassPercentage: Double = 0.0
+    
     var body: some View {
-            VStack{
-                Image("gymbackground")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: 30)
+        VStack{
+            Image("gymbackground")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 30)
+            if userinformation.UserInformationDataBase == [] {
+                NavigationLink {
+                    AddUserInformation()
+                } label: {
+                    Label("Add Information", systemImage: "plus")
+                }
+                .font(.headline)
+                .buttonStyle(.bordered)
+                .background(Color.black)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else {
                 List{
                     ForEach(userinformation.UserInformationDataBase) { information in
-                        VStack {
-                            HStack{
-                                Text("\(information.name)")
-                                    .font(.title)
-                                    .padding()
-                                Image("profile-user")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 60)
-                            }
-                            HStack{
-                                VStack{
-                                    Text("User Age")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.age))")
-                                }
-                                .padding()
-                                VStack{
-                                    Text("User Sex")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(information.sex)")
-                                }
-                            }
-                            HStack{
-                                VStack{
-                                    Text("User Weight")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.weight))")
-                                }
-                                .padding()
-                                
-                                VStack{
-                                    Text("User Height")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.height))")
-                                }
-                                .padding()
-                            }
-                            HStack{
-                                Spacer()
-                                VStack {
-                                    Text("User BMI")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.bmi))")
-                                }
-                                .padding()
-                                VStack {
-                                    Text("User BMR")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.MaleBMR))")
-                                }
-                                .padding()
-                                VStack {
-                                    Text("User TDEE")
-                                        .font(.headline)
-                                        .padding(0.5)
-                                    Text("\(String(information.TDEE))")
-                                }
-                                Spacer()
-                                }
-                            .padding()
-                            }
-                        }
+                        UserInformationDisplay(name: information.name, age: information.age, sex: information.sex, weight: information.weight, height: information.height, amr: information.amr, hip: information.hip, bai: information.bai, bmi: information.bmi, MaleBMR: information.MaleBMR, FemaleBMR: information.FemaleBMR, TDEE: information.TDEE)
                     }
+                    .onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            let user = userinformation.UserInformationDataBase[index]
+                            userinformation.deleteUserInformationfromFirestore(user: user)
+                        }
+                        userinformation.UserInformationDataBase.remove(atOffsets: indexSet)
+                    })
                 }
             }
+            VStack{
+                HStack {
+                    VStack{
+                        NavigationLink {
+                            UserInformationView()
+                        } label: {
+                            Label("Edit", systemImage: "square.and.pencil")
+                        }
+                        .font(.headline)
+                        .buttonStyle(.bordered)
+                        .background(Color.black)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .padding(45)
+                    UserLogOutView()
+                }
+            }
+            .padding()
+            .frame(height: 100.0)
         }
+        
+    }
+}
 
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
