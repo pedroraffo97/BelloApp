@@ -1,0 +1,40 @@
+import Foundation
+
+import SwiftUI
+
+struct ExerciseProfileView: View {
+    @EnvironmentObject var exerciseglossary: ExerciseGlossary
+    var body: some View {
+        VStack{
+            ForEach(exerciseglossary.ExerciseGuide){profile in
+                VStack {
+                    Text("Information")
+                        .font(.title)
+                    profile.display
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50, height: 50, alignment: .center)
+                        .padding()
+                    Text(profile.name)
+                        .padding(0.05)
+                        .font(.headline)
+                    Text(profile.bodypart)
+                        .font(.callout)
+                        .padding()
+                    Text(profile.information)
+                        .padding()
+                    Text(profile.execution)
+                        .padding()
+                    Text(profile.link)
+                }
+            }
+        }
+    }
+}
+    
+struct ExerciseProfileView_Previews: PreviewProvider {
+        static var previews: some View {
+            ExerciseProfileView()
+                .environmentObject(ExerciseGlossary())
+        }
+    }
