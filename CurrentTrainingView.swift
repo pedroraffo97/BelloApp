@@ -13,7 +13,6 @@ struct CurrentTrainingView: View {
     @EnvironmentObject var routinetracker: RoutineTracker
     var body: some View {
         VStack{
-            Text("Finished Trainings").font(.title)
             List{
                 ForEach(routinetracker.FinishedTrainings){ training in
                     VStack {
@@ -31,6 +30,10 @@ struct CurrentTrainingView: View {
                     
                 }.onDelete { indexSet in
                     routinetracker.FinishedTrainings.remove(atOffsets: indexSet)
+                    for index in indexSet {
+                        let traininglog = routinetracker.FinishedTrainings[index]
+                        routinetracker.deleteTrainingLogfromFirestore(traininglog: traininglog)
+                    }
                 }
             }
             
