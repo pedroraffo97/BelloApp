@@ -1,0 +1,102 @@
+//
+//  UserInformationDisplayView.swift
+//  BelloApp
+//
+//  Created by Pedro Raffo Leon on 02.07.24.
+//
+
+import Foundation
+
+import SwiftUI
+
+struct UserInformationDisplay: View {
+    let name: String
+    let age: Double
+    let sex: String
+    let weight: Double
+    let height: Double
+    let amr: Double
+    let hip: Double
+    let bai: Double
+    let bmi: Double
+    let MaleBMR: Double
+    let FemaleBMR: Double
+    let TDEE: Double
+    
+    var body: some View {
+        VStack {
+            HStack{
+                Text("\(name)")
+                    .font(.title)
+                    .padding()
+                Image("profile-user")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 60)
+            }
+            HStack{
+                VStack{
+                    Text("User Age")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(age))")
+                }
+                .padding()
+                VStack{
+                    Text("User Sex")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(sex)")
+                }
+            }
+            HStack{
+                VStack{
+                    Text("User Weight")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(weight))")
+                }
+                .padding()
+                
+                VStack{
+                    Text("User Height")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(height))")
+                }
+                .padding()
+            }
+            HStack{
+                Spacer()
+                VStack {
+                    Text("User BMI")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(bmi))")
+                }
+                .padding()
+                VStack {
+                    Text("User BMR")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(MaleBMR))")
+                }
+                .padding()
+                VStack {
+                    Text("User TDEE")
+                        .font(.headline)
+                        .padding(0.5)
+                    Text("\(String(TDEE))")
+                }
+                Spacer()
+                }
+            VStack {
+                Text("User AMR")
+                    .font(.headline)
+                    .padding(0.5)
+                Text("\(String(amr))")
+            }
+            Spacer()
+        }
+       }
+}
