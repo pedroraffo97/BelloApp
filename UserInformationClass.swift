@@ -9,32 +9,126 @@ import Foundation
 
 import SwiftUI
 
+import FirebaseFirestore
+
+import FirebaseAuth
+
+import Firebase
+
+
+// variables to be used in the amr calculation in the struct User()
+let lightExercise: Double = 1.15
+let moderateExercise: Double = 1.35
+let heavyExercise: Double = 1.50
+let ExtraheavyExercise: Double = 1.85
+
 class UserInformation: ObservableObject {
-    @Published var UserInformationDataBase: [User] = [
-        User(name: "Mr Example", age: 0, sex: "M", weight:0, height: 0, amr: 0)]
-    func save_UserInformation(){
-        do{
-            let fileURL = try getUserInformationFileURL()
-            let data = try JSONEncoder().encode(UserInformationDataBase)
-            try data.write(to:fileURL)
-            print("User Information saved!")
-            
-        }
-        catch{
-            print("Unable to save \(error)")
+    @Published var UserInformationDataBase: [User] = []
+    
+    //function to calculate the AMR with user
+    func CalculateAMRwithUser(userID: UUID) {
+        if let index = UserInformationDataBase.firstIndex(where: {$0.id == userID}) {
+            UserInformationDataBase[index].CalculateAMRwithExerciseLevel()
         }
     }
-    func load_UserInformation(){
-        do {
-            let fileURL = try getUserInformationFileURL()
-            let data = try Data(contentsOf: fileURL)
-            UserInformationDataBase = try JSONDecoder().decode([User].self, from: data)
-            print("User Information loaded: \(UserInformationDataBase.count)")
+    
+    //function to add data to Firestore
+    func addUserInformationtoFirestore(user: User) {
+        //check the authentication status
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User not authenticated")
+            return
         }
-        catch{
-            print("Unable to load user information: \(error)")
-        }
+        
+        //Declare reference to Firestore
+        let db = Firestore.firestore()
+        
+        let UserValues: [String: Any] = [
+            "id": user.id.uuidString,
+            "name": user.name,
+            "sex": user.sex,
+            "age": user.age,
+            "weight": user.weight,
+            "height": user.height,
+            "amr": user.amr,
+            "hip": user.hip,
+            "bai": user.bai,
+            "exerciseLevel": user.exerciseLevel,
+            "bmi": user.bmi,
+            "MaleBMR": user.MaleBMR,
+            "FemaleBMR": user.FemaleBMR,
+            "TDEE": user.TDEE
+        ]
+        
+        db.collection("users").document(userID).collection("userinformation").document(user.id.uuidString).setData(UserValues, merge: true)
+        
     }
+    
+    //function to load data from Firestore
+    func loadUserInformationtoFirestore() {
+        //authenticate with the userID
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User not authenticated")
+            return
+        }
+        //reference to the database
+        let db = Firestore.firestore()
+        
+        db.collection("users").document(userID).collection("userinformation").getDocuments{
+            snapshot, error in
+            //check for errors
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                //no error
+                //check for the userID
+                print("Your REBT data for the user ID is: \(userID) has been loaded succesfully")
+                //check if snapshot is nil
+                if let snapshot = snapshot {
+                    //Retrieve the documents
+                    self.UserInformationDataBase = snapshot.documents.compactMap{
+                        document in
+                        let data = document.data()
+                        let id = UUID(uuidString: data["id"] as? String ?? "") ?? UUID()
+                        let name = data["name"] as? String ?? ""
+                        let age = data["age"] as? Double ?? 0.0
+                        let sex = data["sex"] as? String ?? ""
+                        let weight = data["weight"] as? Double ?? 0.0
+                        let height = data["height"] as? Double ?? 0.0
+                        let amr = data["amr"] as? Double ?? 0.0
+                        let hip = data["hip"] as? Double ?? 0.0
+                        let bai = data["bai"] as? Double ?? 0.0
+                        let exerciseLevel = data["exerciseLevel"] as? String ?? ""
+                        let bmi = data["bmi"] as? Double ?? 0.0
+                        let MaleBMR = data["MaleBMR"] as? Double ?? 0.0
+                        let FemaleBMR = data["FemaleBMR"] as? Double ?? 0.0
+                        let TDEE = data["TDEE"] as? Double ?? 0.0
+                        
+                        return User(name: name, age: age, sex: sex, weight: weight, height: height, amr: amr, hip: hip, bai: bai, exerciseLevel: exerciseLevel, id: id)
+                        }
+                }
+                else {
+                    print("Snapshot is nil")
+                }
+            }
+        }
+        
+    }
+    
+    func deleteUserInformationfromFirestore(user: User){
+        //Check authentication of userID
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("User not authenticated")
+            return
+        }
+        
+        //Firestore reference
+        let db = Firestore.firestore()
+        
+        //Specify the document to delete
+        db.collection("userinformation").document(user.id.uuidString).delete()
+    }
+    
     
 }
 
@@ -47,6 +141,7 @@ struct User : Identifiable, Decodable, Encodable, Equatable {
     var amr: Double = 0.0
     var hip: Double = 0.0
     var bai: Double = 0.0
+    var exerciseLevel: String = ""
     var id = UUID()
     
     var bmi: Double {
@@ -69,10 +164,31 @@ struct User : Identifiable, Decodable, Encodable, Equatable {
     var TDEE: Double {
         return MaleBMR + amr
     }
-}
-
-//FileManager function for the UserInformation
-private func getUserInformationFileURL() throws -> URL{
-    let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    return documentsDirectory.appendingPathComponent("UserInformationDataBase.json")
+    
+    mutating func CalculateAMRwithExerciseLevel() {
+        if self.exerciseLevel == "Light 1x week" && self.sex == "M" {
+            self.amr = self.MaleBMR * lightExercise
+        }
+        else if self.exerciseLevel == "Light 1x week" && self.sex == "F" {
+            self.amr = self.FemaleBMR * lightExercise
+        }
+        else if self.exerciseLevel == "Moderate 3x week" && self.sex == "M" {
+            self.amr = self.MaleBMR * moderateExercise
+        }
+        else if self.exerciseLevel == "Moderate 3x week" && self.sex == "F" {
+            self.amr = self.FemaleBMR * moderateExercise
+        }
+        else if self.exerciseLevel == "Heavy 5x week" && self.sex == "M" {
+            self.amr = self.MaleBMR * heavyExercise
+        }
+        else if self.exerciseLevel == "Heavy 5x week" && self.sex == "F" {
+            self.amr = self.FemaleBMR * heavyExercise
+        }
+        else if self.exerciseLevel == "Extra heavy 6-7x week" && self.sex == "M" {
+            self.amr = self.MaleBMR * ExtraheavyExercise
+        }
+        else if self.exerciseLevel == "Extra heavy 6-7x week" && self.sex == "F" {
+            self.amr = self.FemaleBMR * ExtraheavyExercise
+        }
+    }
 }
