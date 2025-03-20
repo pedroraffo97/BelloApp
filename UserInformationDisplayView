@@ -37,32 +37,36 @@ struct UserInformationDisplay: View {
             HStack{
                 VStack{
                     Text("User Age")
-                        .font(.headline)
                         .padding(0.5)
                     Text("\(String(age))")
+                        .font(.title3)
+                        .bold()
                 }
                 .padding()
                 VStack{
                     Text("User Sex")
-                        .font(.headline)
                         .padding(0.5)
                     Text("\(sex)")
+                        .font(.title3)
+                        .bold()
                 }
             }
             HStack{
                 VStack{
                     Text("User Weight")
-                        .font(.headline)
                         .padding(0.5)
                     Text("\(String(weight))")
+                        .font(.title3)
+                        .bold()
                 }
                 .padding()
                 
                 VStack{
                     Text("User Height")
-                        .font(.headline)
                         .padding(0.5)
                     Text("\(String(height))")
+                        .font(.title3)
+                        .bold()
                 }
                 .padding()
             }
@@ -70,31 +74,35 @@ struct UserInformationDisplay: View {
                 Spacer()
                 VStack {
                     Text("User BMI")
-                        .font(.headline)
                         .padding(0.5)
-                    Text("\(String(bmi))")
+                    Text("\(String(Int(bmi)))")
+                        .font(.title3)
+                        .bold()
                 }
                 .padding()
                 VStack {
                     Text("User BMR")
-                        .font(.headline)
                         .padding(0.5)
-                    Text("\(String(MaleBMR))")
+                    Text("\(String(Int(MaleBMR)))")
+                        .font(.title3)
+                        .bold()
                 }
                 .padding()
                 VStack {
                     Text("User TDEE")
-                        .font(.headline)
                         .padding(0.5)
-                    Text("\(String(TDEE))")
+                    Text("\(String(Int(TDEE)))")
+                        .font(.title3)
+                        .bold()
                 }
                 Spacer()
                 }
             VStack {
                 Text("User AMR")
-                    .font(.headline)
                     .padding(0.5)
-                Text("\(String(amr))")
+                Text("\(String(Int(amr)))")
+                    .font(.title3)
+                    .bold()
             }
             Spacer()
         }
