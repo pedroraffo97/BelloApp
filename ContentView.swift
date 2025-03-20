@@ -24,7 +24,7 @@ struct ContentView: View {
         }
         .onAppear {
             //Simulate a background task or data loading
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 withAnimation{
                     self.isLoading = false
                 }
