@@ -10,31 +10,39 @@ import Foundation
 import SwiftUI
 
 struct MenuView: View {
+    
+    //MARK: Ensures that the tabview is set to black and the title and icons gray and white depending on selection.
+    init () {
+        let appareance = UITabBarAppearance()
+        appareance.configureWithOpaqueBackground()
+        appareance.backgroundColor = UIColor.black
+        appareance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+        appareance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
+        appareance.stackedLayoutAppearance.selected.iconColor = UIColor.white
+        appareance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+        UITabBar.appearance().standardAppearance = appareance
+        UITabBar.appearance().scrollEdgeAppearance = appareance
+    }
+    
     var body: some View {
         TabView{
                 UserProfileView()
                 .tabItem {
-                        Image(systemName:"person.circle")
-                        Text("Profile")
+                            Image(systemName:"person.circle")
+                            Text("Profile")
                     }
-                UserInformationView()
-                    .tabItem {
-                        Image(systemName:"person.badge.plus")
-                        Text("New User")
-                    }
-            
                 ExerciseGlossaryView()
-                        .tabItem {
+                .tabItem {
                             Image(systemName: "figure.run.square.stack.fill")
                             Text("Glossary")
-                }
+                    }
                 TrainingsView()
-                        .tabItem {
+                .tabItem {
                             Image(systemName: "figure.run")
                             Text("Trainings")
                         }
                 ToolsView()
-                        .tabItem {
+                .tabItem {
                             Image(systemName: "wrench.and.screwdriver")
                             Text("Tools")
                         }
