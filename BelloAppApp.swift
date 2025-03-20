@@ -24,6 +24,23 @@ struct BelloAppApp: App {
     @StateObject var routinetracker = RoutineTracker()
     @StateObject var userinformation = UserInformation()
     @StateObject var exerciseglossary = ExerciseGlossary()
+    
+    //MARK: Ensure that Navigations, Views and Lists follow the black theme
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().tintColor = .white
+        
+        UITableView.appearance().backgroundColor = .black
+    }
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
