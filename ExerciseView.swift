@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ExerciseView: View {
+    @Environment(\.dismiss) var dismiss
     var exercise: Exercise
     var data: Routine
     
@@ -16,54 +17,69 @@ struct ExerciseView: View {
         NavigationView {
         ScrollView {
             LazyVStack {
-                Text("Information")
-                    .font(.title)
                 Image(exercise.display)
                     .resizable()
                     .scaledToFit()
-                    .frame(width:   50, height: 50, alignment: .center)
+                    .frame(width:  100, height: 100, alignment: .center)
                     .padding()
-                Text(exercise.name)
-                    .padding(0.05)
-                    .font(.headline)
-                Text(exercise.bodypart)
-                    .font(.callout)
+                HStack {
+                    Text("Muscle Group: ")
+                        .bold()
+                    Text(exercise.bodypart)
+                }
+                    .padding()
+                Text(exercise.information)
                     .padding()
                 HStack{
                     Image(exercise.displayInstructions)
                         .resizable()
                         .scaledToFit()
                         .frame(width:   200, height: 200, alignment: .center)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.white.opacity(0.1))
+                                .shadow(color: Color.white.opacity(0.2), radius: 5)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                         .padding()
                 }
                 .padding()
-                Text(exercise.information)
-                    .padding()
                 Text(exercise.execution)
                     .padding()
                 YoutubeVideoView(videoID: exercise.videolink)
                     .frame(width: 300, height: 200, alignment: .center)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white.opacity(0.1))
+                            .shadow(color: Color.white.opacity(0.2), radius: 5)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .padding()
             }
+            .background(Color.black.opacity(0.9))
+            .foregroundStyle(Color.white)
             .navigationTitle(exercise.name)
             .toolbar {
                 ToolbarItem{
-                    Menu("Add") {
+                    Menu {
                         Button{
                             data.new_routine
-                                .append(exercise)
+                               .append(exercise)
                         } label:{
-                            Text("new Lifting Routine")
+                            Text("Add to New Training")
                         }
-                        Button("HIIT session 1"){
+                        Button("Add to HIIT Session 1"){
                             data.HIITSession1.append(exercise)
                         }
-                        Button("HIIT session 2"){
-                            data.HIITSession2.append(exercise)
+                        Button("Add to HIIT Session 2"){
+                           data.HIITSession2.append(exercise)
                         }
-                        Button("HIIT session 3"){
-                            data.HIITSession3.append(exercise)
+                        Button("Add to HIIT Session 3"){
+                           data.HIITSession3.append(exercise)
                             }
+                    } label: {
+                        Image(systemName: "plus")
+                            .foregroundStyle(Color.white)
                         }
                     }
                 }
