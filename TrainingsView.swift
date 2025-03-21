@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct TrainingsView: View {
-    
+    @State private var selectedTraining: TrainingType? = nil
     var body: some View {
         NavigationView{
             ScrollView(.vertical) {
@@ -18,22 +18,27 @@ struct TrainingsView: View {
                 LazyVGrid (columns: columns, spacing: 10) {
                     ForEach(TrainingType.allCases, id: \.self) {
                         trainingType in
-                        NavigationLink {
-                            trainingType.destinationView
+                        Button {
+                            selectedTraining = trainingType
                         } label: {
                             GeometryReader {
                                 geometry in
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(trainingType.color.gradient)
+                                    .fill(Color.black.opacity(0.8))
+                                    .shadow(radius: 1.5)
                                     .frame(width: geometry.size.width, height: 180)
                                     .overlay(
                                         VStack {
                                             Image(systemName: trainingType.iconName)
-                                                .font(.largeTitle)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(.white.opacity(0.5))
                                             Text(trainingType.rawValue)
-                                                .font(.headline)
+                                                .font(.title2)
+                                                .bold()
+                                                .foregroundColor(.white)
                                         }
-                                            .foregroundColor(.white)
                                     )
                             }
                         }
@@ -43,15 +48,21 @@ struct TrainingsView: View {
                 .padding()
             }
             .navigationTitle("Trainings")
+            .background(Color.black.opacity(0.9))
+            .sheet(item: $selectedTraining) {
+                trainingType in trainingType.destinationView
+            }
         }
     }
 }
 
-enum TrainingType: String, CaseIterable {
+enum TrainingType: String, CaseIterable, Identifiable {
     case training = "Training"
     case crossfit = "Crossfit"
     case hiit = "HIIT"
     case finished = "Finished"
+    
+    var id: String { rawValue }
     
     var iconName: String {
         switch self {
@@ -74,10 +85,10 @@ enum TrainingType: String, CaseIterable {
     @ViewBuilder
     var destinationView: some View {
         switch self {
-        case .training: NewTrainingView().navigationTitle("New Training")
-        case .crossfit: CrossfitTrainingView().navigationTitle("Crossfit")
-        case .hiit: HIITTrainingPortfolioView().navigationTitle("HIIT")
-        case .finished: CurrentTrainingView().navigationTitle("Finished")
+        case .training: NewTrainingView()
+        case .crossfit: CrossfitTrainingView()
+        case .hiit: HIITTrainingPortfolioView()
+        case .finished: CurrentTrainingView()
             
         }
     }
