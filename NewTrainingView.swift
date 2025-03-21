@@ -9,68 +9,93 @@ import Foundation
 
 import SwiftUI
 
-struct NewTrainingView: View {
-    var body: some View {
-        VStack {
-            Text("Please select one Training").font(.headline)
-            NavigationStack {
-                List {
-                    NavigationLink{
-                        ChestTrainingView().navigationTitle("Chest Training")
-                    } label: {
-                        Image("chest")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .padding()
-                        Text("Chest")
-                    }
-                    NavigationLink{
-                        BackTrainingView().navigationTitle("Back Training")
-                    } label: {
-                        Image("back")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .padding()
-                        Text("Back")
-                    }
-                    NavigationLink{
-                        LegTrainingView().navigationTitle("Leg Training")
-                    } label: {
-                        Image("leg")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .padding()
-                        Text("Leg")
-                    }
-                    NavigationLink{
-                        PotenceTrainingView().navigationTitle("Potence Training")
-                    } label: {
-                        Image("boost")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .padding()
-                        Text("Boost")
-                    }
-                    NavigationLink{
-                        NewRoutineView()
-                        .navigationTitle("Your Training")}
-                        label: {
-                                Image(systemName:"dumbbell")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .padding()
-                            Text("You")
-                        }
-                    }
-                }
+
+enum RoutineType: String, CaseIterable, Identifiable {
+    case chest = "Chest"
+    case back = "Back"
+    case legs = "Legs"
+    case boost = "Boost"
+    case yourtraining = "Your Training"
+    
+    var id: String {
+        rawValue
+        }
+    
+    var iconName: String {
+        switch self {
+        case .chest: return "chest"
+        case .back: return "back"
+        case .legs: return "leg"
+        case .boost: return "boost"
+        case .yourtraining: return "dumbbells"
+            }
+        }
+    
+    @ViewBuilder
+    var destinationView: some View {
+        switch self {
+        case .chest: ChestTrainingView()
+        case .back: BackTrainingView()
+        case .legs: LegTrainingView()
+        case .boost: PotenceTrainingView()
+        case .yourtraining: NewRoutineView()
             }
         }
     }
+
+struct NewTrainingView: View {
+    @State private var selectedRoutine: RoutineType? = nil
+    var body: some View {
+        NavigationView {
+            ScrollView(.vertical) {
+                let columns = Array(repeating: GridItem(spacing: 10), count: 2)
+                Text("Select the Training you prefer o create a customized one!")
+                    .font(.headline)
+                    .padding()
+                    .foregroundColor(.white)
+                LazyVGrid(columns: columns, spacing: 10) {
+                    ForEach(RoutineType.allCases, id: \.self) {
+                        routineType in
+                        Button {
+                            selectedRoutine = routineType
+                        } label: {
+                            GeometryReader {
+                                geometry in
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.black.opacity(0.8))
+                                    .shadow(radius: 1.5)
+                                    .frame(width: geometry.size.width, height: 180)
+                                    .overlay(
+                                        VStack {
+                                            Image(routineType.iconName)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 50, height: 50)
+                                                .padding()
+                                            Text(routineType.rawValue)
+                                                .font(.title2)
+                                                .bold()
+                                        }
+                                        .foregroundStyle(Color.white)
+                                    )
+                                    }
+                                }
+                                .frame(height: 180)
+                            }
+                        }
+                        .padding()
+                    }
+            .background(Color.black.opacity(0.9))
+            .sheet(item: $selectedRoutine) {
+                selectedRoutine in
+                    selectedRoutine.destinationView
+            }
+            .navigationTitle("Training")
+                }
+            }
+        }
+
+
 
 struct NewTrainingView_Previews: PreviewProvider {
     static var previews: some View {
