@@ -34,7 +34,7 @@ enum RoutineType: String, CaseIterable, Identifiable {
     @ViewBuilder
     var destinationView: some View {
         switch self {
-        case .chest: ChestTrainingView()
+        case .chest: TrainingRouteView()
         case .back: BackTrainingView()
         case .legs: LegTrainingView()
         case .boost: PotenceTrainingView()
