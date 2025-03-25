@@ -17,15 +17,20 @@ import Foundation
 import SwiftUI
 
 struct TrainingRouteView: View {
-    /*var exercise: Exercise
-    var addexercise: ViewBuilder
-    var title: String
-    var exerciseGroup: [Exercise]*/
     @EnvironmentObject var data: Routine
     @EnvironmentObject var routinetracker: RoutineTracker
     
     @State var showExerciseDescription: Exercise? = nil
+    @State var showAddExercise: Bool = false
+    @State var finishRoutine: Bool = false
     @State private var showDeleteTaskMenu: Bool = false
+    @State private var selectedExerciseID: UUID? = nil
+    
+    func deleteExercise(_ exerciseID: UUID) {
+        if let index = data.chest_exercises.firstIndex(where: {$0.id == exerciseID}) {
+            data.chest_exercises.remove(at: index)
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -34,9 +39,6 @@ struct TrainingRouteView: View {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(data.chest_exercises, id: \.self) {
                         exercise in
-                        Button {
-                            showExerciseDescription = exercise
-                        } label: {
                             GeometryReader {
                                 geometry in
                                 RoundedRectangle(cornerRadius: 10)
@@ -63,52 +65,31 @@ struct TrainingRouteView: View {
                                             .foregroundStyle(Color.white)
                                     )
                                 }
-                                .onLongPressGesture {
-                                    showDeleteTaskMenu = true
-                                }
-                                /*.actionSheet(isPresented: $showDeleteTaskMenu){
-                                    ActionSheet(
-                                        title: Text("Delete Exercise"),
-                                        message: Text("Are you sure you want to delete this exercise from your routine?"),
-                                        buttons: [
-                                            .destructive(Text("Delete")){
-                    
-                                            }
-                                            .cancel()
-                                            ]
-                                        )
-                                    }*/
+                            .onTapGesture {
+                                showExerciseDescription = exercise
                             }
+                            .onLongPressGesture {
+                                selectedExerciseID = exercise.id
+                                showDeleteTaskMenu = true
+                            }
+                            .confirmationDialog("Delete Exercise",
+                                                isPresented: $showDeleteTaskMenu,
+                                                titleVisibility: .visible) {
+                                Button("Delete", role: .destructive) {
+                                    if let exerciseID = selectedExerciseID {
+                                        deleteExercise(exerciseID)
+                                    }
+                                }
+                                Button("Cancel", role: .cancel) { }
+                            }
+                        
                             .frame(height: 100)
                         }
                     .padding()
                     //MARK: Add a new Exercise to the Routine
-                    NavigationLink {
-                        AddChestExerciseView()
+                    Button {
+                        showAddExercise = true
                     } label: {
-                        /*GeometryReader {
-                            geometry in
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black)
-                                .shadow(radius: 1.5)
-                                .frame(height: 100)
-                                .overlay(
-                                    HStack {
-                                        Spacer()
-                                        VStack(alignment: .trailing){
-                                            Image(systemName: "plus")
-                                                .resizable()
-                                                .frame(width: 30, height: 30)
-                                                .bold()
-                                            Text("Add a new exercise")
-                                                .font(.headline)
-                                        }
-                                        .padding()
-                                        .foregroundStyle(Color.white)
-                                        .background(Color.black)
-                                    }
-                                    )
-                                }*/
                         VStack{
                             Label("Add a new exercise", systemImage: "plus")
                                 .foregroundStyle(Color.white)
@@ -116,40 +97,31 @@ struct TrainingRouteView: View {
                                 }
                             }
                             .padding()
-                    /*NavigationLink {
-                        AddChestExerciseView()
+                    Button {
+                        finishRoutine = true
                     } label: {
-                        GeometryReader {
-                            geometry in
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black)
-                                .shadow(radius: 1.5)
-                                .frame(height: 100)
-                                .overlay(
-                                    HStack {
-                                        Spacer()
-                                        VStack(alignment: .trailing){
-                                            Image(systemName: "plus")
-                                                .resizable()
-                                                .frame(width: 30, height: 30)
-                                                .bold()
-                                            Text("Add a new exercise")
-                                                .font(.headline)
-                                        }
-                                        .padding()
-                                        .foregroundStyle(Color.white)
-                                        .background(Color.black)
-                                    }
-                                    )
-                                }
-                            }
-                            .padding()*/
-                        }
+                        Label("Finish Routine", systemImage: "checkmark.circle")
+                            .foregroundStyle(Color.white)
+                            .font(.headline)
                     }
+                    .foregroundStyle(Color.white)
+                    .textFieldStyle(.plain)
+                    .frame(width: 200, height: 40)
+                    .cornerRadius(8)
+                    .background(Color.black)
+                    .padding()
+                }
+            }
             .navigationTitle("Chest Training")
             .sheet(item: $showExerciseDescription) {exercise in
                 RoutineExerciseDescriptionView(exercise: exercise)
                 }
+            .sheet(isPresented: $showAddExercise) {
+                AddChestExerciseView()
+            }
+            .sheet(isPresented: $finishRoutine) {
+                AddRoutineView(routineName: "Chest Training")
+            }
             .background(Color.black.opacity(0.9))
             .toolbar {
                 ToolbarItem {
@@ -157,9 +129,10 @@ struct TrainingRouteView: View {
                         AddRoutineView()
                             .navigationTitle("Routine")
                     } label: {
-                        Label("Add Routine", systemImage: "plus")
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(Color.white)
-                            .font(.headline)
                             }
                         }
                     }
