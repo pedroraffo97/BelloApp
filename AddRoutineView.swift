@@ -18,8 +18,17 @@ struct AddRoutineView: View {
     @State var legExercises: [String] = []
     @State var potenceExercises: [String] = []
     @State var yourExercises: [String] = []
+    
+    //MARK: New training instance where the user inputs go
     @State var new_Training = TrainingLog(name: "", day: "", kcal: "", exercises: "", group: [])
+    
+    
+    //MARK: Date and Kcal as their real types
+    @State var dateDay: Date = Date()
+    @State var numberKcal: Float = 0
+    
     @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         NavigationView {
             ScrollView{
@@ -30,46 +39,37 @@ struct AddRoutineView: View {
                             .font(.headline)
                         TextField("", text: $new_Training.name)
                             .foregroundStyle(Color.white)
-                            .textFieldStyle(.plain)
-                            .frame(height: 30)
-                            .cornerRadius(8)
+                            .textFieldStyle(PlainTextFieldStyle())
+                            .padding()
+                            .frame(height: 50)
                             .background(Color.black)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(10)
+
+                    }
+                    .padding()
+                    
+                    
+                    VStack(alignment:.leading){
+                        HStack {
+                            Text("Date")
+                                .foregroundStyle(.white)
+                                .font(.headline)
+                            CustomDatePicker(date: $dateDay)
+                                .frame(width: 200, height: 50)
+                        }
                     }
                     .padding()
                     VStack(alignment:.leading){
-                        Text("Day")
-                            .foregroundStyle(.white)
-                            .font(.headline)
-                        TextField("", text: $new_Training.day)
-                            .foregroundStyle(Color.white)
-                            .textFieldStyle(.plain)
-                            .frame(height: 30)
-                            .cornerRadius(8)
-                            .background(Color.black)
-                    }
-                    .padding()
-                    VStack(alignment:.leading){
-                        Text("kcal")
-                            .foregroundStyle(.white)
-                            .font(.headline)
-                        TextField("", text: $new_Training.kcal)
-                            .foregroundStyle(Color.white)
-                            .textFieldStyle(.plain)
-                            .frame(height: 30)
-                            .cornerRadius(8)
-                            .background(Color.black)
-                    }
-                    .padding()
-                    VStack(alignment:.leading){
-                        Text("Additional Exercises")
-                            .foregroundStyle(.white)
-                            .font(.headline)
-                        TextField("", text: $new_Training.exercises)
-                            .foregroundStyle(Color.white)
-                            .textFieldStyle(.plain)
-                            .frame(height: 30)
-                            .cornerRadius(8)
-                            .background(Color.black)
+                            Text("kCalories burned")
+                                .foregroundStyle(.white)
+                                .font(.headline)
+                        HStack {
+                            CustomNumberField(value: $numberKcal)
+                                .frame(width: 200, height: 50)
+                            Text("kCal")
+                                .foregroundStyle(.white)
+                        }
                     }
                     .padding()
                 }
@@ -79,6 +79,17 @@ struct AddRoutineView: View {
                 ToolbarItem {
                     Menu {
                         Button("Chest Routine"){
+                            
+                            //MARK: Convert kcal and date to string for saving
+                            //from number KCal into String KCal
+                            new_Training.kcal = String(format: "%.0f", numberKcal)
+                            
+                            //from Date() to String Date
+                            let formatter = DateFormatter()
+                            formatter.dateStyle = .short
+                            new_Training.day = formatter.string(from: dateDay)
+                            
+                            
                             for exercise in data.chest_exercises {
                                 if exercise.name == "" {
                                     let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
@@ -93,6 +104,17 @@ struct AddRoutineView: View {
                         }
                         
                         Button("Back Routine"){
+                            
+                            //MARK: Convert kcal and date to string for saving
+                            //from number KCal into String KCal
+                            new_Training.kcal = String(format: "%.0f", numberKcal)
+                            
+                            //from Date() to String Date
+                            let formatter = DateFormatter()
+                            formatter.dateStyle = .short
+                            new_Training.day = formatter.string(from: dateDay)
+                            
+                            
                             for exercise in data.back_exercises {
                                 if exercise.name == "" {
                                     let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
@@ -108,6 +130,17 @@ struct AddRoutineView: View {
                         }
                         
                         Button("Leg Routine"){
+                            
+                            //MARK: Convert kcal and date to string for saving
+                            //from number KCal into String KCal
+                            new_Training.kcal = String(format: "%.0f", numberKcal)
+                            
+                            //from Date() to String Date
+                            let formatter = DateFormatter()
+                            formatter.dateStyle = .short
+                            new_Training.day = formatter.string(from: dateDay)
+                            
+                            
                             for exercise in data.leg_exercises {
                                 if exercise.name == "" {
                                     let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
@@ -122,6 +155,17 @@ struct AddRoutineView: View {
                         }
                         
                         Button("Potence Routine"){
+                            
+                            //MARK: Convert kcal and date to string for saving
+                            //from number KCal into String KCal
+                            new_Training.kcal = String(format: "%.0f", numberKcal)
+                            
+                            //from Date() to String Date
+                            let formatter = DateFormatter()
+                            formatter.dateStyle = .short
+                            new_Training.day = formatter.string(from: dateDay)
+                            
+                            
                             for exercise in data.potence_exercises {
                                 if exercise.name == "" {
                                     let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
@@ -136,6 +180,17 @@ struct AddRoutineView: View {
                         }
                         
                         Button("Your Routine"){
+                            
+                            //MARK: Convert kcal and date to string for saving
+                            //from number KCal into String KCal
+                            new_Training.kcal = String(format: "%.0f", numberKcal)
+                            
+                            //from Date() to String Date
+                            let formatter = DateFormatter()
+                            formatter.dateStyle = .short
+                            new_Training.day = formatter.string(from: dateDay)
+                            
+                            
                             for exercise in data.new_routine {
                                 if exercise.name == "" {
                                     let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
