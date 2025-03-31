@@ -5,30 +5,27 @@
 //  Created by Pedro Raffo Leon on 24.03.25.
 //
 
-//
-//  ChestTrainingView.swift
-//  BelloApp
-//
-//  Created by Pedro Raffo Leon on 20.10.23.
-//
-
 import Foundation
 
 import SwiftUI
 
 struct TrainingRouteView: View {
-    @EnvironmentObject var data: Routine
+    
+    @Binding var dataVariable: [Exercise]
+    var routineName: String
+    
     @EnvironmentObject var routinetracker: RoutineTracker
     
     @State var showExerciseDescription: Exercise? = nil
     @State var showAddExercise: Bool = false
+    @State var showExerciseList: Bool = false
     @State var finishRoutine: Bool = false
     @State private var showDeleteTaskMenu: Bool = false
     @State private var selectedExerciseID: UUID? = nil
     
     func deleteExercise(_ exerciseID: UUID) {
-        if let index = data.chest_exercises.firstIndex(where: {$0.id == exerciseID}) {
-            data.chest_exercises.remove(at: index)
+        if let index = dataVariable.firstIndex(where: {$0.id == exerciseID}) {
+            dataVariable.remove(at: index)
         }
     }
     
@@ -37,7 +34,7 @@ struct TrainingRouteView: View {
             ScrollView(.vertical) {
                 let columns = Array(repeating: GridItem(spacing: 10), count: 1)
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(data.chest_exercises, id: \.self) {
+                    ForEach(dataVariable, id: \.self) {
                         exercise in
                             GeometryReader {
                                 geometry in
@@ -86,9 +83,15 @@ struct TrainingRouteView: View {
                             .frame(height: 100)
                         }
                     .padding()
-                    //MARK: Add a new Exercise to the Routine
-                    Button {
-                        showAddExercise = true
+                    //MARK: Press button to add a new Exercise to the Routine
+                    Menu {
+                        Button("Search in Exercise List") {
+                            showExerciseList = true
+                        }
+                        Button("Add Exercise manually"){
+                            showAddExercise = true
+                        }
+                        //showAddExercise = true
                     } label: {
                         VStack{
                             Label("Add a new exercise", systemImage: "plus")
@@ -97,6 +100,7 @@ struct TrainingRouteView: View {
                                 }
                             }
                             .padding()
+                    //MARK: Press button to finish the Routine
                     Button {
                         finishRoutine = true
                     } label: {
@@ -104,26 +108,28 @@ struct TrainingRouteView: View {
                             .foregroundStyle(Color.white)
                             .font(.headline)
                     }
-                    .foregroundStyle(Color.white)
-                    .textFieldStyle(.plain)
-                    .frame(width: 200, height: 40)
-                    .cornerRadius(8)
+                    .font(.headline)
+                    .buttonStyle(.bordered)
                     .background(Color.black)
-                    .padding()
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
-            .navigationTitle("Chest Training")
+            .navigationTitle(routineName)
             .sheet(item: $showExerciseDescription) {exercise in
                 RoutineExerciseDescriptionView(exercise: exercise)
                 }
             .sheet(isPresented: $showAddExercise) {
-                AddChestExerciseView()
+                AddExerciseView(data: $dataVariable)
+            }
+            .sheet(isPresented: $showExerciseList) {
+                ExerciseListView(data: $dataVariable)
             }
             .sheet(isPresented: $finishRoutine) {
-                AddRoutineView(routineName: "Chest Training")
+                AddRoutineView(routineName: routineName)
             }
             .background(Color.black.opacity(0.9))
-            .toolbar {
+            /*.toolbar {
                 ToolbarItem {
                     NavigationLink {
                         AddRoutineView()
@@ -135,7 +141,7 @@ struct TrainingRouteView: View {
                             .foregroundStyle(Color.white)
                             }
                         }
-                    }
+                    }*/
                 }
             }
     }
