@@ -88,7 +88,7 @@ enum TrainingType: String, CaseIterable, Identifiable {
         case .training: NewTrainingView()
         case .crossfit: CrossfitTrainingView()
         case .hiit: HIITTrainingPortfolioView()
-        case .finished: CurrentTrainingView()
+        case .finished: FinishedTrainingLogView()
             
         }
     }
