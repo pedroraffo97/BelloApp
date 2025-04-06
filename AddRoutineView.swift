@@ -18,6 +18,8 @@ struct AddRoutineView: View {
     @State var legExercises: [String] = []
     @State var potenceExercises: [String] = []
     @State var yourExercises: [String] = []
+    @State var skillExercises: [String] = []
+    
     
     //MARK: New training instance where the user inputs go
     @State var new_Training = TrainingLog(name: "", day: "", kcal: "", exercises: "", group: [])
@@ -26,6 +28,9 @@ struct AddRoutineView: View {
     //MARK: Date and Kcal as their real types
     @State var dateDay: Date = Date()
     @State var numberKcal: Float = 0
+    
+    
+    //MARK: Function to add a new routine as Finished Training
     
     @Environment(\.dismiss) var dismiss
     
@@ -77,9 +82,7 @@ struct AddRoutineView: View {
             .navigationTitle("Add Routine")
             .toolbar {
                 ToolbarItem {
-                    Menu {
-                        Button("Chest Routine"){
-                            
+                    Button {
                             //MARK: Convert kcal and date to string for saving
                             //from number KCal into String KCal
                             new_Training.kcal = String(format: "%.0f", numberKcal)
@@ -89,138 +92,87 @@ struct AddRoutineView: View {
                             formatter.dateStyle = .short
                             new_Training.day = formatter.string(from: dateDay)
                             
-                            
-                            for exercise in data.chest_exercises {
-                                if exercise.name == "" {
-                                    let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
-                                    chestExercises.append(exerciseText)
-                                } else {
-                                    let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
-                                    chestExercises.append(exerciseText) }
+                            if routineName == "Upper Front" {
+                                for exercise in data.chest_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
+                                        chestExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        chestExercises.append(exerciseText) }
+                                }
+                                new_Training.group.append(contentsOf: chestExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
                             }
-                            new_Training.group.append(contentsOf: chestExercises)
-                            routinetracker.FinishedTrainings.append(new_Training)
-                            dismiss()
-                        }
-                        
-                        Button("Back Routine"){
-                            
-                            //MARK: Convert kcal and date to string for saving
-                            //from number KCal into String KCal
-                            new_Training.kcal = String(format: "%.0f", numberKcal)
-                            
-                            //from Date() to String Date
-                            let formatter = DateFormatter()
-                            formatter.dateStyle = .short
-                            new_Training.day = formatter.string(from: dateDay)
-                            
-                            
-                            for exercise in data.back_exercises {
-                                if exercise.name == "" {
-                                    let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
-                                    backExercises.append(exerciseText)
-                                } else {
-                                    let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
-                                    backExercises.append(exerciseText)}
+                            else if routineName == "Upper Back" {
+                                for exercise in data.back_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
+                                        backExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        backExercises.append(exerciseText)}
+                                }
+                                new_Training.group.append(contentsOf: backExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
                             }
-                            new_Training.group.append(contentsOf: backExercises)
-                            routinetracker.FinishedTrainings.append(new_Training)
-                            dismiss()
-
-                        }
-                        
-                        Button("Leg Routine"){
-                            
-                            //MARK: Convert kcal and date to string for saving
-                            //from number KCal into String KCal
-                            new_Training.kcal = String(format: "%.0f", numberKcal)
-                            
-                            //from Date() to String Date
-                            let formatter = DateFormatter()
-                            formatter.dateStyle = .short
-                            new_Training.day = formatter.string(from: dateDay)
-                            
-                            
-                            for exercise in data.leg_exercises {
-                                if exercise.name == "" {
-                                    let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
-                                    legExercises.append(exerciseText)
-                                } else {
-                                    let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
-                                    legExercises.append(exerciseText) }
+                            else if routineName == "Low" {
+                                for exercise in data.leg_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
+                                        legExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        legExercises.append(exerciseText) }
+                                }
+                                new_Training.group.append(contentsOf: legExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
                             }
-                            new_Training.group.append(contentsOf: legExercises)
-                            routinetracker.FinishedTrainings.append(new_Training)
-                            dismiss()
-                        }
-                        
-                        Button("Potence Routine"){
-                            
-                            //MARK: Convert kcal and date to string for saving
-                            //from number KCal into String KCal
-                            new_Training.kcal = String(format: "%.0f", numberKcal)
-                            
-                            //from Date() to String Date
-                            let formatter = DateFormatter()
-                            formatter.dateStyle = .short
-                            new_Training.day = formatter.string(from: dateDay)
-                            
-                            
-                            for exercise in data.potence_exercises {
-                                if exercise.name == "" {
-                                    let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
-                                    potenceExercises.append(exerciseText)
-                                } else {
-                                    let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
-                                    potenceExercises.append(exerciseText) }
+                            else if routineName == "Explosive" {
+                                for exercise in data.potence_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
+                                        potenceExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        potenceExercises.append(exerciseText) }
+                                }
+                                new_Training.group.append(contentsOf: potenceExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
                             }
-                            new_Training.group.append(contentsOf: potenceExercises)
-                            routinetracker.FinishedTrainings.append(new_Training)
-                            dismiss()
-                        }
-                        
-                        Button("Your Routine"){
-                            
-                            //MARK: Convert kcal and date to string for saving
-                            //from number KCal into String KCal
-                            new_Training.kcal = String(format: "%.0f", numberKcal)
-                            
-                            //from Date() to String Date
-                            let formatter = DateFormatter()
-                            formatter.dateStyle = .short
-                            new_Training.day = formatter.string(from: dateDay)
-                            
-                            
-                            for exercise in data.new_routine {
-                                if exercise.name == "" {
-                                    let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
-                                    yourExercises.append(exerciseText)
-                                } else {
-                                    let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
-                                    yourExercises.append(exerciseText)
+                            else if routineName == "You" {
+                                for exercise in data.new_routine {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \(routineName), Repetition: \(exercise.repetition)"
+                                        yourExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        yourExercises.append(exerciseText)
+                                    }
                                 }
                                 new_Training.group.append(contentsOf:yourExercises)
                                 routinetracker.FinishedTrainings.append(new_Training)
-                                dismiss()
                             }
-                        }
-                        
+                            else if routineName == "skill" {
+                                for exercise in data.skill_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \("skill Training"), Repetition: \(exercise.repetition)"
+                                        skillExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        skillExercises.append(exerciseText)
+                                    }
+                                }
+                                new_Training.group.append(contentsOf: skillExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
+                            }
+                            dismiss()
                     } label: {
                         Image(systemName: "plus")
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundStyle(Color.white)
                     }
-                    /*Button {
-                        routinetracker.FinishedTrainings.append(new_Training)
-                        dismiss()
-                        
-                    } label: {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(Color.white)
-                    }*/
                 }
             }
             .background(Color.black.opacity(0.9))
