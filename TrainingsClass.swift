@@ -25,7 +25,7 @@ struct Exercise: Identifiable, Hashable, Encodable, Decodable {
     var execution: String
     var repetition : String = "4x12"
     var display: String = "dumbbells"
-    var displayInstructions: String = "dumbbells"
+    var displayInstructions: String = ""
     var videolink: String = ""
     var id = UUID()
 
@@ -47,7 +47,7 @@ class Routine: ObservableObject {
                 deadlifts, squats, legExtension, legPress, jumpBox, calfRaises, bike
         ]
     
-    //HIIT Exercises array
+    //MARK: HIIT Exercises array
     @Published var hiit_exercises: [Exercise] = [
         burpees, jumpRope, wallballs, toesToBar, boxDips, plankHold, jumpBox, squatThrows, barbellGroundToOverhead, hikeUpkettlebells, americanSwing, burpees, boxing
     ]
@@ -70,6 +70,9 @@ class Routine: ObservableObject {
         neckStretch, shoulderStretch, tricepsStretch, chestOpener, wristStretch, catCowStretch, hipFlexorStretch, seatedForwardStretch, quadricepsStretch, calfStretch
     ]
     @Published var new_routine: [Exercise] = []
+    
+    @Published var skill_exercises: [Exercise] = [
+        kettlebellCleanAndPress, kettlebellOverheadLunges, kettlebellThruster, burpees, americanSwing, russianTwist, ergobike, rowing, running]
     
     //Save data from the var new_routine in Firestore
     func addRoutinetoFirestore(exercise: Exercise){
@@ -190,6 +193,143 @@ class ExerciseGlossary: ObservableObject {
             boxing, bike
 ]}
 
+
+//MARK: skill exercises
+let ergobike = Exercise(
+    name: "Ergobike",
+    bodypart: "Lower Body & Cardio",
+    information: """
+The ergobike (stationary bike) is a low-impact cardiovascular workout that targets the lower body, including quadriceps, hamstrings, calves, and glutes, while also improving heart health.
+Variations:
+1- Adjust resistance levels to increase or decrease workout intensity.
+2- Try interval sprints: alternate between 30 seconds of fast pedaling and 60 seconds of slow recovery.
+3- Use one-legged pedaling drills to isolate each leg and improve balance and coordination.
+""",
+    execution: "To perform an ergobike session, sit comfortably on the saddle, grip the handlebars, and place your feet firmly on the pedals. Start pedaling at a steady pace, keeping your back straight and core engaged. Adjust resistance as needed for intensity.",
+    repetition: "10–20 minutes", // Adjust duration based on fitness level
+    display: "ergobike",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let running = Exercise(
+    name: "Running",
+    bodypart: "Full Body & Cardio",
+    information: """
+Running is a high-impact cardiovascular exercise that strengthens the heart, lungs, and muscles, especially in the lower body. It also helps improve endurance and burn calories.
+Variations:
+1- Alternate between jogging and sprinting for interval training.
+2- Change terrains—treadmill, pavement, grass, or trails—to challenge different muscle groups.
+3- Try backwards running or high-knee running to engage muscles differently and increase difficulty.
+""",
+    execution: "To perform running, start at a comfortable pace, keeping your posture upright with relaxed shoulders. Swing your arms naturally and maintain a steady breathing rhythm. Focus on soft, controlled foot strikes and increase pace or duration as needed.",
+    repetition: "15–30 minutes", // Adjust based on fitness level and goal
+    display: "running",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let kettlebellCleanAndPress = Exercise(
+    name: "Kettlebell Clean and Press",
+    bodypart: "Full Body",
+    information: """
+The kettlebell clean and press is a compound movement that works the shoulders, arms, back, glutes, and core. It combines explosive power with stability and coordination.
+Variations:
+1- Perform with a single kettlebell to focus on one side at a time.
+2- Try the double kettlebell clean and press for added intensity.
+3- Pause at the rack position to emphasize control and posture.
+""",
+    execution: "Start with the kettlebell between your feet. Hinge at the hips and grip the handle with one hand. Explosively pull the kettlebell up by extending the hips and knees, guiding it into the rack position at your shoulder. From there, press the kettlebell overhead until your arm is fully extended. Lower it back to the rack and then to the ground in a controlled manner. Repeat.",
+    repetition: "8–10 reps per side", // Adjust based on fitness level
+    display: "kettlebellCleanandPress",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let kettlebellOverheadLunges = Exercise(
+    name: "Kettlebell Overhead Lunges",
+    bodypart: "Lower Body & Core",
+    information: """
+Kettlebell overhead lunges are an advanced functional movement that targets the legs, glutes, core, and shoulders, while also improving balance, coordination, and shoulder stability.
+Variations:
+1- Use one kettlebell overhead with the opposite arm free for added balance challenge.
+2- Perform walking lunges instead of stationary to increase intensity and coordination.
+3- Try alternating overhead lunges, switching arms each rep.
+""",
+    execution: "Hold a kettlebell overhead with one arm, elbow locked out and bicep close to your ear. Step forward with one leg into a lunge position, lowering your back knee close to the ground while keeping your torso upright and core engaged. Push through the front heel to return to the starting position. Repeat on the same side or alternate.",
+    repetition: "6–8 reps per leg", // Adjust based on strength and balance
+    display: "Kettlebell Overhead Lunges",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let kettlebellThruster = Exercise(
+    name: "Kettlebell Thruster",
+    bodypart: "Full Body",
+    information: """
+The kettlebell thruster is a powerful full-body movement that combines a front squat with an overhead press. It targets the legs, glutes, shoulders, and core, while also enhancing cardiovascular endurance.
+Variations:
+1- Use one kettlebell for a unilateral challenge and core activation.
+2- Try double kettlebell thrusters for increased intensity.
+3- Perform tempo squats before the press to increase time under tension.
+""",
+    execution: "Begin with the kettlebell in the rack position at shoulder height. Squat down, keeping your chest up and knees tracking over your toes. Drive through your heels to stand up explosively, using the momentum to press the kettlebell overhead. Lower it back to the rack position and repeat.",
+    repetition: "8–12 reps", // Adjust based on strength and conditioning
+    display: "Kettlebell Thruster",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let kettlebellGobletSquat = Exercise(
+    name: "Kettlebell Goblet Squat",
+    bodypart: "Lower Body",
+    information: """
+The kettlebell goblet squat is a foundational lower body exercise that targets the quads, glutes, and core. It's excellent for learning proper squat mechanics while reinforcing posture and control.
+Variations:
+1- Slow down the tempo to increase time under tension.
+2- Use a heavier kettlebell to boost intensity.
+3- Pause at the bottom of the squat to build mobility and control.
+""",
+    execution: "Hold a kettlebell with both hands at chest level, keeping your elbows pointing downward. Keep your chest up and core engaged as you lower into a deep squat. Make sure your knees track in line with your toes. Drive through your heels to return to the starting position.",
+    repetition: "10–15 reps", // Adjust based on fitness level
+    display: "",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let rowing = Exercise(
+    name: "Rowing",
+    bodypart: "Full Body & Cardio",
+    information: """
+Rowing is a full-body, low-impact cardio workout that targets the legs, back, shoulders, arms, and core. It improves cardiovascular endurance, muscular strength, and posture.
+Variations:
+1- Perform intervals: alternate between 30 seconds of sprinting and 60 seconds of slow rowing.
+2- Try single-arm rowing on cable or dumbbell machines to isolate the movement.
+3- Adjust stroke rate and resistance to focus on power or endurance.
+""",
+    execution: "Begin seated on the rower with feet strapped in and hands gripping the handle. Push through your legs first, then lean back slightly and pull the handle toward your chest. Reverse the movement by extending your arms, leaning forward from the hips, and bending your knees to return to the start.",
+    repetition: "5–15 minutes", // Adjust duration based on training goals
+    display: "rowing",
+    displayInstructions: "",
+    videolink: ""
+)
+
+let russianTwist = Exercise(
+    name: "Russian Twist",
+    bodypart: "Core",
+    information: """
+The Russian twist is a core-strengthening exercise that primarily targets the obliques, while also engaging the abdominals, lower back, and hip flexors.
+Variations:
+1- Perform the twist with no weight for beginners or add a dumbbell, kettlebell, or medicine ball for more resistance.
+2- Keep your feet off the ground to increase core activation.
+3- Slow down the twist to maximize time under tension.
+""",
+    execution: "Sit on the floor with knees bent and feet slightly elevated or planted for balance. Hold a weight with both hands at chest level. Lean back slightly while keeping your spine straight and core engaged. Rotate your torso to one side, bringing the weight beside your hip, then twist to the opposite side. Continue alternating sides.",
+    repetition: "20 reps (10 per side)", // Adjust based on fitness level
+    display: "russianTwist",
+    displayInstructions: "",
+    videolink: ""
+)
 
 //warmup exercises: jumpingJacks, armCircles, legSwings, highKnees, hipRotations, neckRotations, mountainClimbers, aSkips
 
@@ -1202,8 +1342,7 @@ let americanSwing = Exercise (
     """,
     execution: "Stand with your feet shoulder-width apart, holding a kettlebell with both hands. Swing the kettlebell overhead with a straight arm, fully extending your hips and knees. Swing the kettlebell back down through your legs. Perform the exercise with proper form and control.",
     repetition: "4x12",
-    display: "kettlebell"
-)
+    display: "american swing")
 
 //Leg Exercises
 
