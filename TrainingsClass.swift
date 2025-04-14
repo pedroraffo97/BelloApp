@@ -16,6 +16,38 @@ import Firebase
 import FirebaseAuth
 
 
+
+struct RoutineDisplay: View {
+    @EnvironmentObject var exerciseGlossary: ExerciseGlossary
+    var body: some View {
+        ScrollView {
+            //MARK: Chest
+            Text("Chest Exercises Check")
+            ForEach(exerciseGlossary.ExerciseGuide, id: \.id){ exercise in
+                NavigationLink {
+                    RoutineExerciseDescriptionView(exercise: exercise)
+                } label: {
+                    VStack {
+                        HStack {
+                            Image(exercise.display)
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            Text(exercise.name)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    RoutineDisplay()
+        .environmentObject(ExerciseGlossary())
+
+}
+
+
 //Identifiable Struct for Exercise
 
 struct Exercise: Identifiable, Hashable, Encodable, Decodable {
@@ -71,8 +103,14 @@ class Routine: ObservableObject {
     ]
     @Published var new_routine: [Exercise] = []
     
+    
+    //MARK: HIIT Routines
     @Published var skill_exercises: [Exercise] = [
         kettlebellCleanAndPress, kettlebellOverheadLunges, kettlebellThruster, burpees, americanSwing, russianTwist, ergobike, rowing, running]
+    @Published var storm_exercises: [Exercise] = [hikeUpkettlebells, kettlebellThruster, kettlebellGobletSquat, ballisticRow, ergoski,ergobike,boxing, burpees, mountainClimbers]
+    
+    //MARK: Row Routines
+    @Published var strong_row_exercises: [Exercise] = [kettlebellThruster, kettlebellOverheadLunges, burpees, rowing]
     
     //Save data from the var new_routine in Firestore
     func addRoutinetoFirestore(exercise: Exercise){
@@ -171,30 +209,90 @@ private func getnew_routineFileURL() throws -> URL{
 
 class ExerciseGlossary: ObservableObject {
     @Published var ExerciseGuide = [
-            //Chest Exercises
-            benchPress, closeGripPress, inclinePress, declinePress, wideGripBenchPress, smithMachineBenchPress, chestPressMachine,
-            dumbbellPullover, inclineSmithMachinePress, standingCableFlyes, chestDips, cablePulldown, landminePress,pressDumbbells,
-            cableDown, cableUp,
-            // Triceps Exercises
-            tricepsDumbbells, tricepsDips, tricepsCable,
-            //Biceps Exercises
-            bicepsDumbbells, bicepsCurls, inversebicepsCurls,
-            //Shoulders Exercises
-            shouldersPress,
-            //Back Exercises
-            pullDown, crossedPulldown, closedPulldown, hammerDumbbells,
-            //Potence Exercises
-            jumpBox, hikeUpkettlebells, pushUps, squatsCleanKettlebell, ballisticRow, americanSwing,
-            //Leg Exercises
-            deadlifts, squats, legExtension, legPress, calfRaises,
-            //Abs Exercises
-            abs,
-            //Cardio Exercises
-            boxing, bike
-]}
+        
+        //Chest Exercises
+        benchPress, closeGripPress, inclinePress, declinePress, wideGripBenchPress, smithMachineBenchPress, chestPressMachine,
+        dumbbellPullover, inclineSmithMachinePress, standingCableFlyes, chestDips, cablePulldown, landminePress, pressDumbbells,
+        cableDown, cableUp,
+        
+        // Triceps Exercises
+        tricepsDumbbells, tricepsDips, tricepsCable,
+        
+        //Biceps Exercises
+        bicepsDumbbells, bicepsCurls, inversebicepsCurls,
+
+        //Shoulders Exercises
+        shouldersPress,
+
+        //Back Exercises
+        pullDown, crossedPulldown, closedPulldown, hammerDumbbells, ballisticRow,
+
+        //Potence Exercises
+        jumpBox, hikeUpkettlebells, pushUps, squatsCleanKettlebell, americanSwing, kettlebellThruster,
+        kettlebellGobletSquat, kettlebellCleanAndPress,
+
+        //Leg Exercises
+        deadlifts, squats, legExtension, legPress, calfRaises, kettlebellOverheadLunges,
+
+        //Abs Exercises
+        abs, russianTwist, mountainClimbers, toesToBar, plankHold,
+
+        //Cardio Exercises
+        boxing, bike, ergoski, ergobike, running, jumpRope, rowing,
+
+        //HIIT
+        burpees, wallballs, boxDips, squatThrows, barbellGroundToOverhead,
+
+        //Warm-Up
+        jumpingJacks, armCircles, legSwings, highKnees, hipRotations, neckRotations, aSkips,
+
+        //Stretching
+        neckStretch, shoulderStretch, tricepsStretch, chestOpener, wristStretch, catCowStretch,
+        hipFlexorStretch, seatedForwardStretch, quadricepsStretch, calfStretch,
+
+        //Rest
+        resting
+    ]}
 
 
-//MARK: skill exercises
+//MARK: Cardio
+
+let ergoski = Exercise(
+    name: "Ergoski",
+    bodypart: "Full Body & Cardio",
+    information: """
+The ergoski, or ski ergometer, is a full-body cardiovascular workout that simulates Nordic skiing. It emphasizes the upper body, core, and legs while improving endurance, coordination, and power.
+Variations:
+1- Perform intervals: alternate between sprint bursts and recovery pulls.
+2- Focus on arms only to isolate upper body engagement.
+3- Try single-arm pulls to improve unilateral strength and control.
+""",
+    execution: "Stand facing the machine with feet shoulder-width apart and grip the handles overhead. Engage your core and pull the handles downward in a strong motion, bending slightly at the hips and knees. Return to the starting position with control and repeat.",
+    repetition: "5–15 minutes", // Adjust based on fitness level
+    display: "ergoski",
+    displayInstructions: "",
+    videolink: ""
+)
+
+
+//MARK: Rest
+let resting = Exercise(
+    name: "Resting",
+    bodypart: "Recovery",
+    information: """
+Resting is a critical component of any fitness routine, allowing the body to repair muscles, restore energy, and prevent overtraining. Active recovery or complete rest can both support long-term progress.
+Variations:
+1- Active rest: light walking, stretching, or foam rolling.
+2- Passive rest: complete stillness and relaxation, such as lying down or sitting.
+3- Mindful rest: combine rest with breathing exercises or meditation.
+""",
+    execution: "Find a comfortable position—either seated or lying down. Breathe deeply and allow your muscles to relax. Use this time to slow your heart rate, reset your focus, and prepare for the next movement or session.",
+    repetition: "30–60 seconds", // Adjust based on workout structure
+    display: "meditating",
+    displayInstructions: "resting_1",
+    videolink: "shorts/K7gAHv44nNs"
+)
+
 let ergobike = Exercise(
     name: "Ergobike",
     bodypart: "Lower Body & Cardio",
@@ -228,6 +326,8 @@ Variations:
     displayInstructions: "",
     videolink: ""
 )
+
+//MARK: Skill exercises
 
 let kettlebellCleanAndPress = Exercise(
     name: "Kettlebell Clean and Press",
@@ -345,7 +445,7 @@ Variations:
 """,
     execution: "To perform jumping jacks, start with feet together and arms at your sides. Jump your feet out while raising your arms overhead. Immediately reverse the motion by jumping back to the starting position. Repeat for the desired duration.",
     repetition: "60 seconds", // Adjust duration based on fitness level
-    display: "jumping-jack",
+    display: "jumping jacks",
     displayInstructions: "jumpingJacks_2",
     videolink: "shorts/_NOdJ88t_jA"
 )
@@ -710,7 +810,7 @@ Variations:
 """,
     execution: "Start on your hands and knees. Inhale, arch your back, and lift your head (cow position). Exhale, round your back, and tuck your chin to your chest (cat position). Repeat in a flowing motion.",
     repetition: "3x15",
-    display: "",
+    display: "CatcowStretch",
     displayInstructions: "",
     videolink: ""
 )
@@ -727,7 +827,7 @@ Variations:
 """,
     execution: "Kneel on one knee with the other foot forward, forming a lunge position. Shift your weight forward, feeling a stretch in the front of the hip on the kneeling leg. Hold for a gentle stretch. Repeat on the other side.",
     repetition: "3x30 seconds",
-    display: "",
+    display: "Hip Flexor Stretch",
     displayInstructions: "",
     videolink: ""
 )
@@ -744,7 +844,7 @@ Variations:
 """,
     execution: "Sit with your legs extended in front of you. Hinge at your hips and reach forward towards your toes. Hold for a gentle stretch. Keep your back straight or round it for different emphases.",
     repetition: "3x30 seconds",
-    display: "",
+    display: "Seated Forward Stretch",
     displayInstructions: "",
     videolink: ""
 )
@@ -761,7 +861,7 @@ Variations:
 """,
     execution: "Stand on one leg and bring the other heel towards your glutes. Hold your foot with your hand and keep your knees close together. Hold for a gentle stretch. Repeat on the other side.",
     repetition: "3x30 seconds",
-    display: "",
+    display: "QuadricepsStretch",
     displayInstructions: "",
     videolink: ""
 )
@@ -778,7 +878,7 @@ Variations:
 """,
     execution: "Stand facing a wall with one foot forward and the other back. Keep the back leg straight, heel on the ground, and bend the front knee. Hold for a gentle stretch. Repeat on the other side.",
     repetition: "3x30 seconds",
-    display: "",
+    display: "calfStretch",
     displayInstructions: "",
     videolink: ""
 )
