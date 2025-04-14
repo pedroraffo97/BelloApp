@@ -19,6 +19,9 @@ struct AddRoutineView: View {
     @State var potenceExercises: [String] = []
     @State var yourExercises: [String] = []
     @State var skillExercises: [String] = []
+    @State var stormExercises: [String] = []
+    @State var strongRowExercises: [String] = []
+    
     
     
     //MARK: New training instance where the user inputs go
@@ -166,6 +169,28 @@ struct AddRoutineView: View {
                                 new_Training.group.append(contentsOf: skillExercises)
                                 routinetracker.FinishedTrainings.append(new_Training)
                             }
+                            else if routineName == "storm" {
+                                for exercise in data.storm_exercises {
+                                    if exercise.name == "" {
+                                        let exerciseText = "Name: \("Storm Training"), Repetition: \(exercise.repetition)"
+                                        stormExercises.append(exerciseText)
+                                    } else {
+                                        let exerciseText = "Name: \(exercise.name), Repetition: \(exercise.repetition)"
+                                        stormExercises.append(exerciseText)
+                                    }
+                                }
+                                new_Training.group.append(contentsOf: stormExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
+                            }
+                            else if routineName == "strongRow" {
+                                for exercise in data.strong_row_exercises {
+                                    let name = exercise.name.isEmpty  ? "Strong Row" : exercise.name
+                                    let exerciseText = "Name: \(name), Repetition: \(exercise.repetition)"
+                                    strongRowExercises.append(exerciseText)
+                                }
+                                new_Training.group.append(contentsOf: strongRowExercises)
+                                routinetracker.FinishedTrainings.append(new_Training)
+                            }
                             dismiss()
                     } label: {
                         Image(systemName: "plus")
@@ -179,6 +204,8 @@ struct AddRoutineView: View {
             }
         }
     }
+
+//include 30 seconds of obligatory pause after the 3 min
 
 struct AddRoutineView_previews: PreviewProvider {
     static var previews: some View{
