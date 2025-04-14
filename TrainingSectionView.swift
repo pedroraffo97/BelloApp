@@ -71,6 +71,12 @@ struct WorkoutSessionView: View {
     
     @State private var audioPlayer: AVAudioPlayer?
     
+    func formatTime(_ totalSeconds: Int) -> String {
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+    
      
     var body: some View {
         GeometryReader {
@@ -107,7 +113,7 @@ struct WorkoutSessionView: View {
                 }
                 
                 // Mostrar el tiempo restante
-                Text("Tiempo restante: \(Int(remainingTime))s")
+                Text("Rest time: \(formatTime(Int(remainingTime)))")
                     .font(.title2)
                     .bold()
                     .foregroundColor(remainingTime <= 10 ? .red : .white) // Rojo si quedan ≤10s
@@ -239,11 +245,16 @@ struct TrainingSectionView: View {
     var resttime: Float
 
     @State private var showSession = false  // Controla cuándo mostrar la vista de entrenamiento
+    
+    //MARK: Variables to change the color of the button after tapping
+    @State private var tapCount = 0
+    var tapstoChangeColor: Int
 
     var body: some View {
         VStack(spacing: 20) {
             // Botón que inicia el entrenamiento
             Button(action: {
+                tapCount += 1
                 withAnimation {
                     showSession = true
                 }
@@ -256,7 +267,7 @@ struct TrainingSectionView: View {
                     .font(.headline)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.black)
+                    .background(tapCount >= tapstoChangeColor ? Color.green : Color.black)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
@@ -280,6 +291,6 @@ struct TrainingSectionView_Previews: PreviewProvider {
             armCircles
         ]
 
-        TrainingSectionView(buttonTitle: "Estiremos", exercises: sampleExercises, time: 15, resttime: 5)
+        TrainingSectionView(buttonTitle: "Estiremos", exercises: sampleExercises, time: 15, resttime: 5, tapstoChangeColor: 3)
     }
 }
